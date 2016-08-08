@@ -1,6 +1,9 @@
 @extends('layouts.start_layout')
 
+@section('title')
 
+Login page
+@stop
 
 @section('content')
 
@@ -16,12 +19,19 @@
             <div style="display:none" id="login-alert" class="alert alert-danger col-sm-12"></div>
 
 
-            {!! Form::open(array('url' => 'foo/bar'),
-               array(
-               "id"=>"loginform",
-                "class"=>"form-horizontal"
-               )) !!}
 
+            {!! Form::open(
+                   array(
+                       'url' => 'auth/login',
+                       'method' => 'post'
+                   ),
+                   array(
+                       "id"=>"loginform",
+                       "class"=>"form-horizontal"
+                   )
+               )
+            !!}
+            <div class="error">{{ $errors->first('user_error') }}</div>
 
             <div style="margin-bottom: 25px" class="input-group">
                     <span class="input-group-addon">
@@ -35,6 +45,7 @@
                        'placeholder'=>'Your email'
                     ))
                 !!}
+                <div class="error">{{ $errors->first('email') }}</div>
             </div>
 
             <div style="margin-bottom: 25px" class="input-group">
@@ -47,6 +58,7 @@
                         'placeholder'=>'password'
                     ))
                 !!}
+                <div class="error">{{ $errors->first('password') }}</div>
             </div>
 
             <div style="margin-top:10px" class="form-group">

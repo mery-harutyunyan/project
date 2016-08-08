@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Auth;
 use App\User;
+use Illuminate\Support\Facades\Mail;
 use Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
+use App\Mailer\MyMailer;
+
 use Illuminate\Http\Request;
+
 
 class AuthController extends Controller
 {
@@ -38,40 +43,95 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware($this->guestMiddleware(), ['except' => 'logout']);
+        $this->middleware($this->guestMiddleware(), ['except' => ['logout', 'getLogout']]);
     }
 
-    /**
-     * Get a validator for an incoming registration request.
-     *
-     * @param  array  $data
-     * @return \Illuminate\Contracts\Validation\Validator
-     */
-    protected function validator(array $data)
+    public function postRegister(Request $request, MyMailer $mailer)
     {
-        return Validator::make($data, [
-            'name' => 'required|max:255',
-            'email' => 'required|email|max:255|unique:users',
-            'password' => 'required|min:6|confirmed',
+        // validate new user
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'required|max:255',
+            'last_name' => 'required|max:255',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|string|between:3,8|confirmed',
+            'password_confirmation' => 'required|string|between:3,8',
         ]);
+
+        if ($validator->fails()) {
+            return redirect('auth/register')
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        // add new user to DB
+        $user = User::create([
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+            'email_token' => str_random(30)
+        ]);
+
+        //send user verification email
+        if ($user) {
+            $mailer->emailVerification($user);
+        }
+
     }
 
-    /**
-     * Create a new user instance after a valid registration.
-     *
-     * @param  array  $data
-     * @return User
-     */
-    protected function create(array $data)
+
+    public function verify($token)
     {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => bcrypt($data['password']),
-        ]);
+        $user = User::whereEmailToken($token)->firstOrFail();
+
+        $user->active = 1;
+        $user->email_token = null;
+
+        $user->save();
+
+        return redirect('auth/login');
+
     }
 
-    public function register(Request $request){
-        var_dump($request->all());
+    public function postLogin(Request $request)
+    {
+        // validate login credentionals
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required|string|between:3,8',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect('auth/login')
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        if (Auth::attempt($this->getCredentials($request))) {
+            return redirect('dashboard');
+        }
+
+        return redirect('auth/login')
+            ->withErrors([
+                'user_error' => 'User does not exists or not activated'
+            ])
+            ->withInput();
+
+    }
+
+    protected function getCredentials($request)
+    {
+        return [
+            'email' => $request->email,
+            'password' => $request->password,
+            'active' => 1
+        ];
+    }
+
+
+    public function getLogout()
+    {
+        Auth::logout();
+        return redirect('auth/login');
     }
 }
