@@ -1,4 +1,4 @@
-<!-- Static navbar -->
+
 <nav class="navbar navbar-default navbar-static-top">
     <div class="container">
         <div class="navbar-header">
@@ -12,27 +12,20 @@
             <a class="navbar-brand" href="/">Mery's project</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
-            @if (!Auth::user())
-                <ul class="nav navbar-nav">
+            <ul class="nav navbar-nav">
+                @if (!Auth::user())
                     <li><a href="/auth/register">Register</a></li>
                     <li><a href="/auth/login">Login</a></li>
-                </ul>
-            @endif
+                @elseif(Auth::user() && Auth::user()->hasRole('user'))
+                    <li class="{{(Route::getCurrentRoute()->getPath() == '/')?'active':''}}"><a href="/">Home</a></li>
+                    <li class="{{(Route::getCurrentRoute()->getPath() == 'dashboard')?'active':''}}"><a href="/dashboard">Dashboard</a></li>
+                    <li class="{{(Route::getCurrentRoute()->getPath() == 'shop')?'active':''}}"><a href="/shop">Shop</a></li>
+                @endif
+            </ul>
 
             @if (Auth::user())
                 <ul class="nav navbar-nav navbar-right">
-
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                           aria-expanded="false">
-                            <img height="30" src="{{ URL::asset('img/user.jpg') }}">
-                            <span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a href="/dashboard">Dashboard</a></li>
-                            <li><a href="/auth/logout">Log out</a></li>
-                        </ul>
-                    </li>
+                    <li><a href="/auth/logout">Log out</a></li>
                 </ul>
             @endif
         </div>

@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use Auth;
-use App\User;
-use Illuminate\Support\Facades\Mail;
+use App\Models\User;
 use Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
@@ -43,7 +42,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware($this->guestMiddleware(), ['except' => ['logout', 'getLogout']]);
+        $this->middleware($this->guestMiddleware(), ['except' => ['getLogout']]);
     }
 
     public function postRegister(Request $request, MyMailer $mailer)
@@ -108,7 +107,17 @@ class AuthController extends Controller
         }
 
         if (Auth::attempt($this->getCredentials($request))) {
-            return redirect('dashboard');
+
+            $user = User::find(Auth::user()->id);
+
+            if($user->hasRole('admin')){
+                return redirect('/products');
+            }
+
+            if($user->hasRole('user')){
+                return redirect('/dashboard');
+            }
+
         }
 
         return redirect('auth/login')
@@ -124,7 +133,7 @@ class AuthController extends Controller
         return [
             'email' => $request->email,
             'password' => $request->password,
-            'active' => 1
+            'active' => 1,
         ];
     }
 

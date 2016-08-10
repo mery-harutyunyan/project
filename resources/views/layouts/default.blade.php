@@ -13,19 +13,20 @@
     <link href="{{ URL::asset('css/style.css') }}" rel="stylesheet">
 
 
+    <script src="{{ URL::asset('js/jquery.min.js') }}"></script>
+    <script src="{{ URL::asset('js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('js/bootstrap-notify.min.js') }}"></script>
 
 
 </head>
 
 <body>
+@include('elements/notify')
 @include('elements/menu')
 
 <div class="container">
         @yield('content')
 </div>
-
-<script src="{{ URL::asset('js/jquery.min.js') }}"></script>
-<script src="{{ URL::asset('js/bootstrap.min.js') }}"></script>
 
 </body>
 </html>

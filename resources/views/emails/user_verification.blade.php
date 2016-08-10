@@ -1,4 +1,4 @@
-@extends('layouts.email_layout')
+@extends('layouts.email')
 
 @section('title')
 

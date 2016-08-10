@@ -1,4 +1,4 @@
-@extends('layouts.default_layout')
+@extends('layouts.default')
 
 @section('title')
     Dashboard
@@ -18,22 +18,21 @@
                     <div class="profile-usertitle-name">
                         {{ Auth::user()->first_name }}    {{ Auth::user()->last_name }}
                     </div>
-
                 </div>
-
-
 
                 <div class="profile-usermenu">
                     <ul class="nav">
                         <li class="active">
                             <a href="#">
                                 <i class="glyphicon glyphicon-user"></i>
-                                Overview </a>
+                                Overview
+                            </a>
                         </li>
                         <li>
                             <a href="#">
                                 <i class="glyphicon glyphicon-bookmark"></i>
-                                My basket</a>
+                                My basket
+                            </a>
                         </li>
 
                     </ul>
@@ -44,7 +43,7 @@
         </div>
         <div class="col-md-9">
             <div class="profile-content">
-                Products
+
             </div>
         </div>
     </div>

@@ -16,7 +16,6 @@ Route::get('/', function () {
 });
 
 
-
 // Authentication routes...
 Route::get('auth/login', 'Auth\AuthController@getLogin');
 Route::post('auth/login', 'Auth\AuthController@postLogin');
@@ -25,10 +24,19 @@ Route::get('auth/logout', 'Auth\AuthController@getLogout');
 // Registration routes...
 Route::get('auth/register', 'Auth\AuthController@getRegister');
 Route::post('auth/register', 'Auth\AuthController@postRegister');
-
 Route::get('auth/verify/{token}', 'Auth\AuthController@verify');
 
-
+// User routes...
 Route::get('dashboard', 'UsersController@dashboard');
+
+// Products routes...
+Route::get('shop', 'ShopController@shop');
+Route::get('viewProduct/{id}', 'ShopController@viewProduct');
+
+// Admin routes...
+Route::get('products/data', ['as' => 'products.data', 'uses' => 'Admin\ProductsController@data']);
+Route::resource('products', 'Admin\ProductsController');
+
+
 
 

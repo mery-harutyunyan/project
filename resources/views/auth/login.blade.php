@@ -1,4 +1,4 @@
-@extends('layouts.start_layout')
+@extends('layouts.start')
 
 @section('title')
 

@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
 
 class Authenticate
@@ -21,9 +22,18 @@ class Authenticate
             if ($request->ajax() || $request->wantsJson()) {
                 return response('Unauthorized.', 401);
             } else {
+                Session::flash('note.error', 'Please login at first!');
+
                 return redirect()->guest('auth/login');
             }
         }
+
+        if (!Auth::user()->hasRole('user') || Auth::user()->hasRole('admin')) {
+            Session::flash('note.error', 'You have not user permission to access this page!');
+
+            return redirect('/');
+        }
+
 
         return $next($request);
     }

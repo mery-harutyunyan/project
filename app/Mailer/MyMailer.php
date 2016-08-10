@@ -1,7 +1,7 @@
 <?php
 namespace App\Mailer;
 
-use App\User;
+use App\Models\User;
 use Illuminate\Contracts\Mail\Mailer;
 
 class MyMailer
