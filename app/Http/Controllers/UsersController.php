@@ -17,8 +17,6 @@ class UsersController extends Controller
 
     public function dashboard()
     {
-        Session::flash('note.success', 'Hiiiiiiiiiiiii');
-
         return view('users.dashboard');
     }
 

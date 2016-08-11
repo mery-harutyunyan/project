@@ -4,11 +4,14 @@ namespace App\Http\Controllers\Auth;
 
 use Auth;
 use App\Models\User;
+use App\Models\Role;
+use App\Models\RoleUser;
 use Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 use App\Mailer\MyMailer;
+use Illuminate\Support\Facades\Session;
 
 use Illuminate\Http\Request;
 
@@ -45,6 +48,11 @@ class AuthController extends Controller
         $this->middleware($this->guestMiddleware(), ['except' => ['getLogout']]);
     }
 
+    /**
+     * @param Request $request
+     * @param MyMailer $mailer
+     * @return $this
+     */
     public function postRegister(Request $request, MyMailer $mailer)
     {
         // validate new user
@@ -73,7 +81,25 @@ class AuthController extends Controller
 
         //send user verification email
         if ($user) {
+            //get user role id
+            $userRoleId = Role::where('name', 'user')
+                ->select('id')
+                ->first()
+                ->id;
+
+
+            // add user's role
+
+            $addRole = RoleUser::create([
+                'user_id' => $user->id,
+                'role_id' => $userRoleId
+            ]);
+
             $mailer->emailVerification($user);
+
+            Session::flash('note.success', 'You have successfuly registered.Please check your email to verify your account');
+
+            return redirect('/');
         }
 
     }

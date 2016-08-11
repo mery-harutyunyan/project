@@ -26,7 +26,6 @@ class ProductsController extends Controller
      */
     public function index()
     {
-        Session::flash('note.success', 'You have successfuly add new product');
 
         return view('products.index');
     }
