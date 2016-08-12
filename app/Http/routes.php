@@ -35,7 +35,17 @@ Route::get('viewProduct/{id}', 'ShopController@viewProduct');
 
 // Admin routes...
 Route::get('products/data', ['as' => 'products.data', 'uses' => 'Admin\ProductsController@data']);
+Route::delete('products/deleteImage', 'Admin\ProductsController@deleteImage');
+Route::post('products/changeThumb', 'Admin\ProductsController@changeThumb');
+
 Route::resource('products', 'Admin\ProductsController');
+
+
+//Route::get('paypal', 'PaypalController@index');
+Route::post('paypal', 'PaypalController@getCheckout');
+Route::get('getDone', 'PaypalController@getDone');
+Route::get('getCancel', 'PaypalController@getCancel');
+
 
 
 

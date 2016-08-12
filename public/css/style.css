@@ -118,3 +118,29 @@ body {
 .error-template {padding: 40px 15px;text-align: center;}
 .error-actions {margin-top:15px;margin-bottom:15px;}
 .error-actions .btn { margin-right:10px; }
+
+
+
+.navbar-default{
+    background-color: #337ab7;
+    border-color: #2e6da4;
+}
+.navbar-default .navbar-brand {
+    color: #FFF;
+}
+
+.navbar-default .navbar-nav > li > a {
+    color: #FFF;
+}
+
+.navbar-default .navbar-nav>.active>a,.navbar-default .navbar-nav>.active>a:focus,.navbar-default .navbar-nav>.active>a:hover{
+    color:#FFF;background-color:#2e6da4
+}
+
+.navbar-brand:hover{color:#FFF;background-color:transparent}
+
+.panel-info > .panel-heading {
+    background-color: #337ab7;
+    border-color: #2e6da4;
+    color: #FFF;
+}

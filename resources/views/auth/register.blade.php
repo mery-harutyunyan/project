@@ -17,19 +17,13 @@
             {!! Form::open(
                     array(
                         'url' => 'auth/register',
-                        'method' => 'post'
-                    ),
-                    array(
-                        "id"=>"signupform",
+                        'method' => 'post',
+                        "id"=>"signup-form",
                         "class"=>"form-horizontal"
                     )
                 )
             !!}
 
-            <div id="signupalert" style="display:none" class="alert alert-danger">
-                <p>Error:</p>
-                <span></span>
-            </div>
 
             <div class="form-group">
                 <label for="firstname" class="col-md-3 control-label">First Name</label>
@@ -77,6 +71,7 @@
                 <div class="col-md-9">
                     {!! Form::password('password',
                         array(
+                            'id' => 'password',
                             'class'=>'form-control',
                             'placeholder'=>'password'
                         ))
@@ -109,9 +104,20 @@
 
                     {!! Form::submit('Sign Up',
                         array(
-                           'class'=>'btn btn-info'
+                           'class'=>'btn btn-primary pull-right'
                         ))
                     !!}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-12 control">
+                    <div style="border-top: 1px solid #888; padding-top:15px; margin-top:15px; font-size:85%">
+                        Have an account ?
+                        <a href="/auth/login">
+                            Sign In Here
+                        </a>
+                    </div>
                 </div>
             </div>
 
@@ -120,3 +126,72 @@
     </div>
 
 @stop
+
+@push('scripts')
+<script>
+    $(document).ready(function () {
+        $('#signup-form').validate({
+            rules: {
+                first_name: {
+                    required: true,
+                },
+                last_name: {
+                    required: true,
+                },
+                email: {
+                    required: true,
+                    email: true
+                },
+                password: {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 8
+                },
+                password_confirmation: {
+                    minlength: 3,
+                    maxlength: 8,
+                    equalTo: "#password"
+                }
+            },
+            messages: {
+                first_name: {
+                    required: "Please enter your first name",
+                },
+                last_name: {
+                    required: "Please enter your last name",
+                },
+                email: {
+                    required: "Please enter email address",
+                    email: "Please enter a valid email address",
+                },
+                password: {
+                    required: "Please enter your password",
+                    minlength: "Password must have minimum 3 letters",
+                    maxlength: "Password must have maximum 3 letters",
+                },
+                password_confirmation: {
+                    minlength: "Password must have minimum 3 letters",
+                    maxlength: "Password must have maximum 3 letters",
+                    equalTo: "Passwords mismatch"
+                }
+
+            },
+            highlight: function (element) {
+                $(element).closest('.form-group').addClass('has-error');
+            },
+            unhighlight: function (element) {
+                $(element).closest('.form-group').removeClass('has-error');
+            },
+            errorElement: 'span',
+            errorClass: 'help-block',
+            errorPlacement: function (error, element) {
+                if (element.parent('.input-group').length) {
+                    error.insertAfter(element.parent());
+                } else {
+                    error.insertAfter(element);
+                }
+            }
+        })
+    })
+</script>
+@endpush

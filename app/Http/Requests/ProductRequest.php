@@ -27,7 +27,7 @@ class ProductRequest extends Request
             'name' => 'required|alpha_num',
             'count' => 'required|integer',
             'price' => 'required|numeric',
-            'discount' => 'required|numeric|between:0,100',
+            'discount' => 'numeric|between:0,100',
             'description' => 'required',
             'images' => 'required'
         ];

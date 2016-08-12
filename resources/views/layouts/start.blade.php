@@ -7,12 +7,18 @@
     <meta name="description" content="Responsive HTML template for Your company">
 
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
-    <link href="{{ URL::asset('css/bootstrap.min.css') }}" rel="stylesheet">
-    <link href="{{ URL::asset('css/bootstrap-responsive.min.css') }}" rel="stylesheet">
+    <link href="{{asset('css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{asset('css/bootstrap-responsive.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/style.css') }}" rel="stylesheet">
 
-    <script src="{{ URL::asset('js/jquery.min.js') }}"></script>
-    <script src="{{ URL::asset('js/bootstrap.min.js') }}"></script>
-    <script src="{{ URL::asset('js/bootstrap-notify.min.js') }}"></script>
+    <script src="{{asset('js/jquery.min.js') }}"></script>
+    <script src="{{asset('js/bootstrap.min.js') }}"></script>
+    <script src="{{asset('js/bootstrap-notify.min.js') }}"></script>
+    <script src="{{ asset('js/jquery.validate.min.js') }}"></script>
+    <script src="{{ asset('js/additional-methods.min.js') }}"></script>
+
+
+
 </head>
 
 <body>
@@ -22,6 +28,6 @@
         @yield('content')
     </div>
 </div>
-
+@stack('scripts')
 </body>
 </html>

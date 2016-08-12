@@ -70,7 +70,7 @@
 
                 {!! Form::open(
                        array(
-                           'url' => 'users/buy',
+                           'url' => 'paypal',
                            'method' => 'post'
                        ),
                        array(

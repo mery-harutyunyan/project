@@ -159,6 +159,7 @@ return [
         Collective\Html\HtmlServiceProvider::class,
         Yajra\Datatables\DatatablesServiceProvider::class,
         Zizaco\Entrust\EntrustServiceProvider::class,
+        'Netshell\Paypal\PaypalServiceProvider',
     ],
 
     /*
@@ -209,6 +210,7 @@ return [
         'Html' => Collective\Html\HtmlFacade::class,
         'Datatables' => Yajra\Datatables\Facades\Datatables::class,
         'Entrust'   => Zizaco\Entrust\EntrustFacade::class,
+        'Paypal' => 'Netshell\Paypal\Facades\Paypal',
     ],
 
 ];

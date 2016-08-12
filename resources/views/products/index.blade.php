@@ -63,6 +63,12 @@
                 success: function (data) {
                     if (data.status) {
                         products_table.ajax.reload();
+                        $.notify({
+                            message: data.message,
+                        }, {
+                            delay: 2000,
+                            type: 'success',
+                        });
                     }
                 }
             })

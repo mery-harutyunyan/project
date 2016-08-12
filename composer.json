@@ -10,7 +10,9 @@
         "laravelcollective/html": "5.2.*",
         "yajra/laravel-datatables-oracle": "^6.16",
         "zizaco/entrust": "5.2.x-dev",
-        "doctrine/dbal": "v2.5.4"
+        "doctrine/dbal": "v2.5.4",
+        "netshell/paypal": "dev-master"
+
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

@@ -13,7 +13,7 @@
         </h3>
 
 
-        {{ Form::open(array('url' => url('products'), 'class'=>'form-horizontal', 'files'=> true)) }}
+        {{ Form::open(array('url' => url('products'),'id'=>'add-product', 'class'=>'form-horizontal', 'files'=> true)) }}
 
         <div class="form-group">
             {{Form::label('name', 'Name', array('class' => 'col-sm-2 control-label'))}}
@@ -105,3 +105,68 @@
         {!! Form::close() !!}
     </div>
 @stop
+
+@push('scripts')
+<script>
+    $(document).ready(function () {
+        $('#add-product').validate({
+            rules: {
+                name: {
+                    required: true,
+                },
+                description: {
+                    required: true,
+                },
+                price: {
+                    required: true,
+                    number: true
+                },
+                discount: {
+                    number: true,
+                    range: [0, 100]
+                },
+                count: {
+                    required: true,
+                    digits: true
+                }
+            },
+            messages: {
+                name: {
+                    required: "Please enter product name",
+                },
+                description: {
+                    required: "Please enter product description",
+                },
+                price: {
+                    required: "Please enter product price",
+                    number: "Product price must be number",
+                },
+                discount: {
+                    number: "Product discount must be number",
+                    range: "Discount must be in (0,100) range ",
+                },
+                count: {
+                    required: "Please enter product count",
+                    digits: "Product price must be number",
+                }
+
+            },
+            highlight: function (element) {
+                $(element).closest('.form-group').addClass('has-error');
+            },
+            unhighlight: function (element) {
+                $(element).closest('.form-group').removeClass('has-error');
+            },
+            errorElement: 'span',
+            errorClass: 'help-block',
+            errorPlacement: function (error, element) {
+                if (element.parent('.input-group').length) {
+                    error.insertAfter(element.parent());
+                } else {
+                    error.insertAfter(element);
+                }
+            }
+        })
+    })
+</script>
+@endpush

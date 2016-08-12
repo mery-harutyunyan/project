@@ -146,11 +146,10 @@ class AuthController extends Controller
 
         }
 
-        return redirect('auth/login')
-            ->withErrors([
-                'user_error' => 'User does not exists or not activated'
-            ])
-            ->withInput();
+
+        Session::flash('note.error', 'User does not exists or not activated');
+
+        return redirect('auth/login')->withInput();
 
     }
 
@@ -167,6 +166,6 @@ class AuthController extends Controller
     public function getLogout()
     {
         Auth::logout();
-        return redirect('auth/login');
+        return redirect('/');
     }
 }

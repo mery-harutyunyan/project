@@ -11,7 +11,9 @@
             <a class="navbar-brand" href="/products">Admin Panel</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
-
+            <ul class="nav navbar-nav">
+                <li class="{{(Route::getCurrentRoute()->getPath() == 'products')?'active':''}}"><a href="/products">Products</a></li>
+            </ul>
             @if (Auth::user())
                 <ul class="nav navbar-nav navbar-right">
                     <li><a href="/auth/logout">Log out</a></li>

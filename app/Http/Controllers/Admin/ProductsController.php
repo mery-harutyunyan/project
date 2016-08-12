@@ -19,6 +19,7 @@ class ProductsController extends Controller
     {
         $this->middleware('admin');
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -68,17 +69,29 @@ class ProductsController extends Controller
             $picture = '';
             if ($request->hasFile('images')) {
                 $files = $request->file('images');
+                $firstFile = true;
                 foreach ($files as $file) {
-                    $filename = $file->getClientOriginalName();
                     $extension = $file->getClientOriginalExtension();
-                    $picture = md5(microtime()) . $filename;
+                    $picture = md5(microtime()) . '.' . $extension;
                     $destinationPath = base_path() . '\public\img\products';
                     $file->move($destinationPath, $picture);
 
-                    $images = Images::create(array(
-                        'product_id' => $product->id,
-                        'name' => $picture
-                    ));
+                    if ($firstFile) {
+                        $data = array(
+                            'product_id' => $product->id,
+                            'name' => $picture,
+                            'is_thumb' => 1
+                        );
+                    } else {
+                        $data = array(
+                            'product_id' => $product->id,
+                            'name' => $picture,
+                            'is_thumb' => 0
+                        );
+                    }
+
+                    $images = Images::create($data);
+                    $firstFile = false;
                 }
             }
 
@@ -108,7 +121,10 @@ class ProductsController extends Controller
     public function edit($id)
     {
         $product = Products::where('id', '=', $id)->first();
-        return view('products.edit', ['product' => $product]);
+
+        $images = Images::where('product_id', '=', $id)->get()->toArray();
+
+        return view('products.edit', ['product' => $product, 'images' => $images]);
     }
 
     /**
@@ -136,9 +152,8 @@ class ProductsController extends Controller
             if ($request->hasFile('images')) {
                 $files = $request->file('images');
                 foreach ($files as $file) {
-                    $filename = $file->getClientOriginalName();
                     $extension = $file->getClientOriginalExtension();
-                    $picture = md5(microtime()) . $filename;
+                    $picture = md5(microtime()) . '.' . $extension;
                     $destinationPath = base_path() . '\public\img\products';
                     $file->move($destinationPath, $picture);
 
@@ -168,5 +183,42 @@ class ProductsController extends Controller
 
         return response()->json(['status' => true, 'message' => 'Product deleted successfully!']);
 
+    }
+
+    /**
+     * @return mixed
+     */
+    public function deleteImage(Request $request)
+    {
+        $id = $request->input('id');
+
+        $image = Images::find($id);
+        $image->delete();
+
+        return response()->json(['status' => true, 'message' => 'Image deleted successfully!']);
+
+    }
+
+    /**
+     * @return string
+     */
+    public function changeThumb(Request $request)
+    {
+        $image_id = $request->input('image_id');
+        $product_id = $request->input('product_id');
+
+        $updateOldImage = Images::where('product_id', $product_id)
+            ->where('is_thumb', '=', 1)
+            ->update([
+                'is_thumb' => 0,
+            ]);
+
+        $updateNewImage = Images::where('product_id', $product_id)
+            ->where('id', '=', $image_id)
+            ->update([
+                'is_thumb' => 1,
+            ]);
+
+        return response()->json(['status' => true, 'message' => 'Thumb changed successfully!']);
     }
 }
