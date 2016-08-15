@@ -22,7 +22,7 @@ class ShopController extends Controller
      */
     public function shop()
     {
-        $products = Products::where('products.count', '>', 0)
+         $products = Products::where('products.count', '>', 0)
             ->leftJoin('images', function ($join) {
                 $join->on('images.product_id', '=', 'products.id');
                 $join->on('images.is_thumb', '=', DB::raw('1'));

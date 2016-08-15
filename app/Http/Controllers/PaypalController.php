@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Paypal;
 use Redirect;
 
+use Auth;
 use PayPal\Api\Amount;
 use PayPal\Api\Details;
 use PayPal\Api\Item;
@@ -47,41 +48,53 @@ class PaypalController extends Controller
     {
 
         $productId = $request->product;
+        $productCount = $request->product_count;
 
         $productData = Products::findOrFail($productId);
 
-        $payer = new Payer();
+        $payer = PayPal:: Payer();
         $payer->setPaymentMethod("paypal");
 
-        $item1 = new Item();
+        $item1 = PayPal:: Item();
         $item1->setName($productData->name)
             ->setCurrency('USD')
-            ->setQuantity(1)
+            ->setQuantity((int)$productCount)
             ->setSku($productData->id)// Similar to `item_number` in Classic API
             ->setPrice($productData->price);
 
+        $productAmount = $productData->price * $productCount;
 
-        $itemList = new ItemList();
-        $itemList->setItems(array($item1));
+        $discountItemPrice = ($productData->price * $productData->discount) / 100;
+
+        $itemDiscount = PayPal:: Item();
+        $itemDiscount->setName('Discount')
+            ->setCurrency('USD')
+            ->setQuantity((int)$productCount)
+            ->setPrice(-1 * abs($discountItemPrice));
 
 
-        $amount = new Amount();
+        $itemList = PayPal:: ItemList();
+        $itemList->setItems(array($item1, $itemDiscount));
+
+        $discountAmount = ($productData->price * $productCount * $productData->discount) / 100;
+
+        $amount = PayPal:: Amount();
         $amount->setCurrency("USD")
-            ->setTotal($productData->price);
+            ->setTotal($productAmount - $discountAmount);
 
-        $transaction = new Transaction();
+        $transaction = PayPal:: Transaction();
         $transaction->setAmount($amount)
             ->setItemList($itemList)
             ->setDescription("Payment description")
             ->setInvoiceNumber(uniqid());
 
 
-        $redirectUrls = new RedirectUrls();
-        $redirectUrls->setReturnUrl(action('PaypalController@getDone'));
+        $redirectUrls = PayPal:: RedirectUrls();
+        $redirectUrls->setReturnUrl(action('PaypalController@getDone', ['productId' => $productId, 'productCount' => $productCount]));
         $redirectUrls->setCancelUrl(action('PaypalController@getCancel'));
 
 
-        $payment = new Payment();
+        $payment = PayPal:: Payment();
         $payment->setIntent("sale")
             ->setPayer($payer)
             ->setRedirectUrls($redirectUrls)
@@ -111,7 +124,8 @@ class PaypalController extends Controller
         $id = $request->get('paymentId');
         $token = $request->get('token');
         $payer_id = $request->get('PayerID');
-
+        $productId = $request->get('productId');
+        $productCount = $request->get('productCount');
         $payment = PayPal::getById($id, $this->_apiContext);
 
         $paymentExecution = PayPal::PaymentExecution();
@@ -119,7 +133,7 @@ class PaypalController extends Controller
         $paymentExecution->setPayerId($payer_id);
         $executePayment = $payment->execute($paymentExecution, $this->_apiContext);
 
-        $this->saveTransactionData($executePayment);
+        $this->saveTransactionData($executePayment, $productId, $productCount);
 
 
         // Clear the shopping cart, write to database, send notifications, etc.
@@ -138,9 +152,11 @@ class PaypalController extends Controller
     /**
      * @return mixed
      */
-    public function saveTransactionData($executePayment)
+    public function saveTransactionData($executePayment, $productId, $productCount)
     {
         $save = Transactions::create(array(
+            'user_id' => Auth::user()->id,
+            'product_id' => $productId,
             'transaction_id' => $executePayment->id,
             'state' => $executePayment->state,
             'payment_method' => $executePayment->payer->payment_method,
@@ -157,13 +173,16 @@ class PaypalController extends Controller
                 . $executePayment->payer->payer_info->shipping_address->postal_code . ', '
                 . $executePayment->payer->payer_info->shipping_address->country_code,
 
-            'payer_billing_address' => $executePayment->payer->payer_info->shipping_address->line1 . ', '
-                . $executePayment->payer->payer_info->shipping_address->line1 . ', '
-                . $executePayment->payer->payer_info->shipping_address->city . ', '
-                . $executePayment->payer->payer_info->shipping_address->state . ', '
-                . $executePayment->payer->payer_info->shipping_address->postal_code . ', '
-                . $executePayment->payer->payer_info->shipping_address->country_code,
+            'payer_billing_address' => $executePayment->payer->payer_info->billing_address->line1 . ', '
+                . $executePayment->payer->payer_info->billing_address->line1 . ', '
+                . $executePayment->payer->payer_info->billing_address->city . ', '
+                . $executePayment->payer->payer_info->billing_address->state . ', '
+                . $executePayment->payer->payer_info->billing_address->postal_code . ', '
+                . $executePayment->payer->payer_info->billing_address->country_code,
         ));
+
+
+        $updateProductCount = Products::where('id', $productId)->decrement('count', $productCount);
 
 
     }

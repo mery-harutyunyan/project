@@ -9,6 +9,8 @@ class Transactions extends Model
     protected $table = 'transactions';
 
     protected $fillable = [
+        'user_id',
+        'product_id',
         'transaction_id',
         'state',
         'payment_method',

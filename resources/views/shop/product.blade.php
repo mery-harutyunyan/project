@@ -80,6 +80,18 @@
                    )
                 !!}
 
+
+                <?php
+                $counts = array();
+                for ($i = 1; $i <= 10; $i++) {
+                    $counts[$i] = $i;
+                }
+
+                ?>
+                {!! Form::select('product_count',$counts, '1')  !!}
+
+                <br/>
+                {!! Form::hidden('discount_rate', $product->discount)  !!}
                 {!! Form::hidden('product', $product->id)  !!}
 
                 {!! Form::submit('Buy Now',
