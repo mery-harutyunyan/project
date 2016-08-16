@@ -9,6 +9,9 @@
     <div class="col-md-12" style="background: white">
 
         <div class="col-md-6">
+            @if($product->discount)
+                <span class="label label-danger">- {{$product->discount}}%</span>
+            @endif
             @if(count($images)>=2)
                 <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
 
@@ -61,47 +64,62 @@
                 {{$product->name}}
             </h2>
             <p> {{$product->description}}</p>
-            <p> Price : ${{$product->price}}</p>
-            <p> Discount : {{$product->discount}}%</p>
+
+
+            <?php $price = round($product->price * (1 - ($product->discount / 100)), 1, PHP_ROUND_HALF_UP) ?>
+
+            <p>
+                @if($product->discount)
+                    Price :
+                    <del class="text-muted">${{$product->price}}</del>
+                    <br/>
+                    Discount price: ${{$price}}
+                @else
+                    Price : ${{$price}}
+                @endif
+            </p>
+
             <p> Availble : {{$product->count}}</p>
 
-            <div>
+            @if($product->cart_id)
+                <p class="text-danger">This product is in your cart</p>
+            @else
 
 
-                {!! Form::open(
-                       array(
-                           'url' => 'paypal',
-                           'method' => 'post'
-                       ),
-                       array(
-                           "id"=>"buyform",
-                           "class"=>"form-horizontal"
+                <div>
+                    {!! Form::open(
+                           array(
+                                'url' => url('cart'),
+                           )
                        )
-                   )
-                !!}
+                    !!}
 
 
-                <?php
-                $counts = array();
-                for ($i = 1; $i <= 10; $i++) {
-                    $counts[$i] = $i;
-                }
+                    <?php
+                    $counts = array();
+                    $limit = min(10, $product->count);
+                    for ($i = 1; $i <= $limit; $i++) {
+                        $counts[$i] = $i;
+                    }
+                    ?>
 
-                ?>
-                {!! Form::select('product_count',$counts, '1')  !!}
+                    <div class="form-group">
+                        {!! Form::select('product_count',$counts, '1')  !!}
+                    </div>
+                    {!! Form::hidden('product_id', $product->id)  !!}
 
-                <br/>
-                {!! Form::hidden('discount_rate', $product->discount)  !!}
-                {!! Form::hidden('product', $product->id)  !!}
+                    <div class="form-group">
+                        {!! Form::submit('Add to card',
+                         array(
+                            'class'=>'btn btn-primary text-center'
+                         ))
+                     !!}
+                    </div>
 
-                {!! Form::submit('Buy Now',
-                     array(
-                        'class'=>'btn btn-primary text-center'
-                     ))
-                 !!}
+                    {!! Form::close() !!}
+                </div>
 
-                {!! Form::close() !!}
-            </div>
+            @endif
         </div>
 
     </div>

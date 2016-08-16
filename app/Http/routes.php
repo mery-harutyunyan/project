@@ -11,10 +11,6 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 
 // Authentication routes...
 Route::get('auth/login', 'Auth\AuthController@getLogin');
@@ -30,7 +26,7 @@ Route::get('auth/verify/{token}', 'Auth\AuthController@verify');
 Route::get('dashboard', 'UsersController@dashboard');
 
 // Products routes...
-Route::get('shop', 'ShopController@shop');
+Route::get('/', 'ShopController@shop');
 Route::get('viewProduct/{id}', 'ShopController@viewProduct');
 
 // Admin routes...
@@ -40,6 +36,7 @@ Route::post('products/changeThumb', 'Admin\ProductsController@changeThumb');
 
 Route::resource('products', 'Admin\ProductsController');
 
+Route::resource('cart', 'CartController');
 
 //Route::get('paypal', 'PaypalController@index');
 Route::post('paypal', 'PaypalController@getCheckout');
@@ -47,6 +44,8 @@ Route::get('getDone', 'PaypalController@getDone');
 Route::get('getCancel', 'PaypalController@getCancel');
 
 
+Route::post('cart/updateCount', 'CartController@updateCount');
+Route::get('orders', 'UsersController@orders');
 
 
 

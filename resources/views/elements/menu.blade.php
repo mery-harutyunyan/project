@@ -1,4 +1,3 @@
-
 <nav class="navbar navbar-default navbar-static-top">
     <div class="container">
         <div class="navbar-header">
@@ -18,14 +17,35 @@
                     <li><a href="/auth/login">Login</a></li>
                 @elseif(Auth::user() && Auth::user()->hasRole('user'))
                     <li class="{{(Route::getCurrentRoute()->getPath() == '/')?'active':''}}"><a href="/">Home</a></li>
-                    <li class="{{(Route::getCurrentRoute()->getPath() == 'dashboard')?'active':''}}"><a href="/dashboard">Dashboard</a></li>
-                    <li class="{{(Route::getCurrentRoute()->getPath() == 'shop')?'active':''}}"><a href="/shop">Shop</a></li>
                 @endif
             </ul>
 
             @if (Auth::user())
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="/auth/logout">Log out</a></li>
+                    <li class="{{(Route::getCurrentRoute()->getPath() == 'cart')?'active':''}}">
+                        <a href="/cart">
+                            @if($cartCount)
+                                <span class="cart-all-count label label-danger">{{$cartCount}}</span>
+                            @endif
+                            <span class="glyphicon glyphicon-shopping-cart " aria-hidden="true"></span>
+                            Shopping cart
+                        </a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                           aria-expanded="false">
+                            {{Auth::user()->first_name.' '.Auth::user()->last_name}}
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/dashboard">Dashboard</a></li>
+                            <li><a href="/orders">Orders</a></li>
+
+                            <li role="separator" class="divider"></li>
+                            <li><a href="/auth/logout">Log out</a></li>
+                        </ul>
+                    </li>
+
                 </ul>
             @endif
         </div>

@@ -17,7 +17,7 @@
     <script src="{{ asset('js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap-notify.min.js') }}"></script>
     <script src="{{ asset('js/jquery.validate.min.js') }}"></script>
-
+    <script src="{{ asset('js/serializeForm.js') }}"></script>
 
 </head>
 

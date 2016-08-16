@@ -141,7 +141,7 @@ class AuthController extends Controller
             }
 
             if($user->hasRole('user')){
-                return redirect('/dashboard');
+                return redirect('/');
             }
 
         }

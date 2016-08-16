@@ -20,30 +20,14 @@
                     </div>
                 </div>
 
-                <div class="profile-usermenu">
-                    <ul class="nav">
-                        <li class="active">
-                            <a href="#">
-                                <i class="glyphicon glyphicon-user"></i>
-                                Overview
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                <i class="glyphicon glyphicon-bookmark"></i>
-                                My basket
-                            </a>
-                        </li>
-
-                    </ul>
-                </div>
+                @include('elements/profile_menu')
 
 
             </div>
         </div>
         <div class="col-md-9">
             <div class="profile-content">
-
+                User profile data goes here
             </div>
         </div>
     </div>

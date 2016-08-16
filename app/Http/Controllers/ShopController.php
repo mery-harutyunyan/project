@@ -6,7 +6,7 @@ use DB;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
-
+use Auth;
 use App\Models\Products;
 use App\Models\Images;
 
@@ -22,13 +22,13 @@ class ShopController extends Controller
      */
     public function shop()
     {
-         $products = Products::where('products.count', '>', 0)
+        $products = Products::where('products.count', '>', 0)
             ->leftJoin('images', function ($join) {
                 $join->on('images.product_id', '=', 'products.id');
                 $join->on('images.is_thumb', '=', DB::raw('1'));
             })
             ->select('products.*', 'images.name as photo')
-            ->paginate(2);
+            ->paginate(4);
 
         return view('shop.shop', ['products' => $products]);
     }
@@ -39,7 +39,14 @@ class ShopController extends Controller
             return redirect('dashboard');
         }
 
-        $product = Products::where('id', '=', $id)->first();
+        $product = Products::select('products.*', 'carts.id as cart_id')
+            ->where('products.id', '=', $id)
+            ->leftJoin('carts', function ($join) {
+                $join->on('carts.product_id', '=', 'products.id');
+                $join->on('carts.user_id', '=', DB::raw(Auth::user()->id));
+            })
+            ->first();
+
 
         if (!$product) {
             return redirect('dashboard');
@@ -53,4 +60,6 @@ class ShopController extends Controller
         ]);
 
     }
+
+
 }

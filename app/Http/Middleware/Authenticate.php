@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Cart;
 
 class Authenticate
 {
@@ -34,7 +35,9 @@ class Authenticate
             return redirect('/');
         }
 
+        $cartCount = Cart::where('user_id', '=', Auth::user()->id)->sum('count');
 
+        view()->share('cartCount', $cartCount);
         return $next($request);
     }
 }
